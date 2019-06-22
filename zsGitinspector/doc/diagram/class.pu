@@ -1,0 +1,108 @@
+@startuml class-changes
+
+' Changesçš„ç±»å›¾
+
+right footer li.zhensheng@jetson.com.cn-%date[yyyy.MM.dd]%
+
+class FileDiff{
+    +name
+    +insertions
+    +deletions
+    {static} is_filediff_line(string)
+    {static} get_extension(string)
+    {static} get_filename(string)
+    {static} is_valid_extension(string)
+}
+
+class Commit{
+    +timestamp
+    +date
+    +sha
+    +author
+    +email
+    +filediffs[]
+    +add_filediff(filediff)
+    +get_filediffs()
+    {static} get_author_and_email(string)
+    {static} is_commit_line(string)
+}
+
+class AuthorInfo{
+    +email
+    +insertions
+    +deletions
+    +commits
+}
+
+class Changes{
+    +authors{}
+    +authors_dateinfo{}
+    +authors_by_email{}
+    +emails_by_author{}
+    +commits
+    +first_commit_date
+    +last_commit_date
+    -iadd(commit)
+    {static} is_filediff_line(string)
+    {static} get_extension(string)
+    {static} get_filename(string)
+    {static} is_valid_extension(string)
+}
+
+
+class Blame{
+    +blames{}
+    -iadd(blame)
+    {static} is_revision(string)
+    {static} get_stability(author, blamed_rows, changes)
+    {static} get_time(string)
+    {static} get_summed_blames()
+}
+
+class BlameThread{
+    +useweeks
+    +changes
+    +blame_command
+    +extension
+    +blames
+    +filename
+    +blamechunk_time
+    +blamechunk_is_last
+    +blamechunk_revision
+    -clear_blamechunk_info()
+    -handle_blamechunk_content(content)
+    {static} is_revision(string)
+    {static} get_stability(author, blamed_rows, changes)
+    {static} get_time(string)
+    {static} get_summed_blames()
+}
+
+class comment{
+    +is_comment(extension, string)
+    +handle_comment_block(is_inside_comment, extension, content)
+    -comment_begining{}
+    -comment_end{}
+    -comment{}
+    -comment_markers_must_be_at_begining{}
+    -has_comment_begining(extension, string)
+    -has_comment_end(extension, string)
+}
+
+
+class MetricsLogic{
+    +eloc{}
+    +cyclomatic_complexity{}
+    +cyclomatic_complexity_density{}
+    -iadd(other)
+    {static} get_cyclomatic_complexity(file_r, extension)
+    {static} get_eloc(file_r, extension)
+}
+
+Changes *-- Commit : have many >
+Commit *-- FileDiff : have many >
+Commit *-- AuthorInfo : have many >
+
+Blame o-- Changes : depends >
+Blame --> FileDiff : needs >
+
+@enduml
